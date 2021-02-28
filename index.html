@@ -27,6 +27,9 @@
         padding: 0;
       }
       </style>
+      <style>
+        p {font-size: 20px;}
+        </style>
       
   </head>
   <body>
@@ -44,15 +47,23 @@
       </div>
       <div id ="content">
         <div class = "screen" id= "home"> Home Page </div>
-        <div class = "screen" id = "form"> Form Page</div>
+
+
+
+        <div class = "screen" id = "form"> Form Page
+       
+    <!-- <div id="results"> -->
+    <!-- </div> -->
+  
+        </div>
           
+
+
+
         <div class = "screen" id = "data"> Data Page
-          
               <div id = "dataDisplay"></div>
             </div>
-          
-        
-            
+
             <div class = "screen" id = "map">
           <center>
             <h1>MAP</h1>
@@ -69,17 +80,105 @@
                   <div class="card-body">
                     <h5 class="card-title">Card title</h5>
                     <!-- <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6> -->
-                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    <p class="card-text, font">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
                     <!-- <a href="#" class="card-link">Website</a> -->
                     <!-- <a href="#" class="card-link">Another link</a> -->
                    </div>
                  </div>
                </div>
               </div>
+          
+        <!-- <div id= "searchData">
+          <form id="data">
+      <select name="community_area_name" id="community_area_name">
+        <option></option>
+      </select>
+      </form>
+      <button id="search">Search</button>
+    
+    </div> -->
+  <div id= "form"> 
+          <form id="data">
+      <select name="community_area_name" id="community_area_name">
+        <option></option>
+      </select>
+      </form>
+      <button id="search">Search</button>
+      <div id="results"></div>
+      </div>
+      
+  <script>
+   
+    fetch("https://data.cityofchicago.org/resource/aksk-kvfp.json?$select=distinct%20community_area_name")
+      .then ( (response) => {return response.json() })
+      .then ( (result) => {
+
+          // if sorting by a string value, need a more complex sort function
+          result.sort((a, b) => {
+            if (a === b) {
+              return 0;
+            }
+            return a.community_area_name < b.community_area_name ? -1 : 1;
+          });
+
+
+
+          for (let area of result) {
+            let opt = document.createElement("option");
+            opt.innerText = area.community_area_name;
+           // console.log(opt);
+            document.querySelector("#community_area_name").append(opt);
+      
+          }
+
+
+      })
+  
+      let endpoint2 = "https://data.cityofchicago.org/resource/aksk-kvfp.json";
+
+      document.querySelector("#search").addEventListener ("click", (e) => {
+    
+          document.querySelector("#results").innerText = "fetching results";
+
+          let f = document.querySelector("form");
+          let fd = new FormData(f);
+          let sp = new URLSearchParams(fd);
+
+          let url = endpoint2 +  "?" + sp.toString();
+          // fetch
+         // document.querySelector("#form").style.display = "block"
+          fetch (url)
+            .then ( (response) => { return response.json() })
+            .then ( (datas) => {
+                document.querySelector("#results").innerText = "Results found: " + datas.length;  
+ 
+                for (let item of datas) {      
+              let clone = document.querySelector("#createRow").cloneNode(true);
+              clone.style.display = "block";
+              clone.querySelector("h5").innerText = item["community_area_name"];
+              clone.querySelector("p").innerText = item["address"] + "- Square Footage: " + item["sq_ft"] + "\nPin Number: "+ item["pin"];
+              document.querySelector("#dataDisplay").append(clone);
+                    // create a paragraph
+                    //let p = document.createElement ("p");
+                    // set the value
+                  //  p.innerText = item["community_area_name"] + ": " + item["address"];
+                    // append to body
+                 //   document.querySelector("#results").append(p);
+
+                }
+              
+            })
+
+
+      });
+
+    </script>
+
   <script>
         let map;
         function initMap(){
           const chicago = {lat:41.8781, lng: -87.6298};
+          
           map = new google.maps.Map(document.querySelector("#mapDisplay"), {
             center: chicago,
             zoom: 11,
@@ -88,12 +187,15 @@
           .then ( (response) => {return response.json()})
           .then ( (data) => {
             data.forEach ( (land) => {
+
              let marker = new google.maps.Marker({
               position: {lat: parseFloat(land.latitude), lng: parseFloat(land.longitude)},
               map: map
+            
           });
             let infowindow = new google.maps.InfoWindow({
              content: land.id
+             
           });
              marker.addListener("click", () => {
              infowindow.open(map,marker);
@@ -138,27 +240,28 @@
          targetScreen.style.display = "block";
         })
       })
+      
       </script>
 
     <!-- listing the data in a card -->
-      <script>
+      <!-- <script>
   
   let endpoint = "https://data.cityofchicago.org/resource/aksk-kvfp.json";
 
     fetch(endpoint)
   .then((response) => {return response.json()})
   .then((data) =>{
-  //  console.log(data);
+    console.log(data);
    data.forEach((item) =>{
      
-      let clone = document.querySelector("#createRow").cloneNode(true);
+      let clone = document.querySelector("#card").cloneNode(true);
       clone.style.display = "block";
       clone.querySelector("h5").innerText = item["community_area_name"];
       clone.querySelector("p").innerText = item["address"] + "- Square Footage: " + item["sq_ft"] + "\nPin Number: "+ item["pin"];
        document.querySelector("#dataDisplay").append(clone);
    })
   })   
-</script>
+</script> -->
       
   </body>
 </html>
