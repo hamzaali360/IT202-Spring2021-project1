@@ -51,7 +51,16 @@
            </div>
 
         <div class = "screen" id = "form"> Form Page
-        </div>
+        <div id= "form"> 
+          <form id="data">
+      <select name="community_area_name" id="community_area_name">
+        <option></option>
+      </select>
+      </form>
+      <button id="search">Search</button>
+      <div id="results"></div>
+      </div>
+      </div>
           
         <div class = "screen" id = "data"> Data Page
               <div id = "dataDisplay"></div>
@@ -83,15 +92,7 @@
               </div>
           
 
-  <div id= "form"> 
-          <form id="data">
-      <select name="community_area_name" id="community_area_name">
-        <option></option>
-      </select>
-      </form>
-      <button id="search">Search</button>
-      <div id="results"></div>
-      </div>
+  
       
   <script>
    
@@ -118,7 +119,7 @@
       let endpoint2 = "https://data.cityofchicago.org/resource/aksk-kvfp.json";
 
       document.querySelector("#search").addEventListener ("click", (e) => {
-    
+          document.querySelector("#dataDisplay").innerText = "fetching results";
           document.querySelector("#results").innerText = "fetching results";
 
           let f = document.querySelector("form");
@@ -201,7 +202,7 @@
       })
          let screen = event.target.getAttribute("data-screen");
 
-         let targetScreen = document.querySelector("#" + screen);
+         let targetScreen = document.querySelector(".screen#" + screen);
 
          targetScreen.style.display = "block";
         })
